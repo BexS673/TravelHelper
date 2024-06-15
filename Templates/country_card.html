@@ -1,0 +1,16 @@
+<h2 class="accordion-header recommendation">
+    <button class="accordion-button rounded collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#${destination.id}" aria-expanded="false" aria-controls=${destination.id}>
+        <h3>
+            ${titleConfig[0]}
+            <small class="text-body-secondary">${titleConfig[1]}</small>
+        </h3>
+    </button>
+</h2>
+<div id="${destination.id}" class="accordion-collapse collapse" data-bs-parent="#recommend_list">
+    <div class="accordion-body" id="${destination.id}_body">
+        <ul id="country_list"></ul>
+    </div>
+</div>
+
+
+

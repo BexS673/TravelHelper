@@ -6,12 +6,12 @@
       "cities": [
         {
           "name": "Sydney, Australia",
-          "imageUrl": "../Static/",
+          "imageUrl": "../Static/sydney.jpg",
           "description": "A vibrant city known for its iconic landmarks like the Sydney Opera House and Sydney Harbour Bridge."
         },
         {
           "name": "Melbourne, Australia",
-          "imageUrl": "enter_your_image_for_melbourne.jpg",
+          "imageUrl": "../Static/melbourne.jpg",
           "description": "A cultural hub famous for its art, food, and diverse neighborhoods."
         }
       ]
@@ -22,12 +22,12 @@
       "cities": [
         {
           "name": "Tokyo, Japan",
-          "imageUrl": "enter_your_image_for_tokyo.jpg",
+          "imageUrl": "../Static/tokyo.jpg",
           "description": "A bustling metropolis blending tradition and modernity, famous for its cherry blossoms and rich culture."
         },
         {
           "name": "Kyoto, Japan",
-          "imageUrl": "enter_your_image_for_kyoto.jpg",
+          "imageUrl": "../Static/kyoto.jpg",
           "description": "Known for its historic temples, gardens, and traditional tea houses."
         }
       ]
@@ -38,12 +38,12 @@
       "cities": [
         {
           "name": "Rio de Janeiro, Brazil",
-          "imageUrl": "enter_your_image_for_rio.jpg",
+          "imageUrl": "../Static/rio.jpg",
           "description": "A lively city known for its stunning beaches, vibrant carnival celebrations, and iconic landmarks."
         },
         {
-          "name": "S�o Paulo, Brazil",
-          "imageUrl": "enter_your_image_for_sao-paulo.jpg",
+          "name": "Sao Paulo, Brazil",
+          "imageUrl": "../Static/sao_paulo.jpg",
           "description": "The financial hub with diverse culture, arts, and a vibrant nightlife."
         }
       ]
@@ -53,13 +53,13 @@
     {
       "id": 1,
       "name": "Angkor Wat, Cambodia",
-      "imageUrl": "enter_your_image_for_angkor-wat.jpg",
+      "imageUrl": "../Static/angkor_wat.jpg",
       "description": "A UNESCO World Heritage site and the largest religious monument in the world."
     },
     {
       "id": 2,
       "name": "Taj Mahal, India",
-      "imageUrl": "enter_your_image_for_taj-mahal.jpg",
+      "imageUrl": "../Static/taj_mahal.jpg",
       "description": "An iconic symbol of love and a masterpiece of Mughal architecture."
     }
   ],

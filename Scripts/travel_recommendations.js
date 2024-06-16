@@ -1,21 +1,22 @@
 /**
  * Search function.
  */
-function searchDestination() {
+async function searchDestination() {
 
-    let homeLoaded = loadHome();
+    loadHome();
     var destinationSearch = document.getElementById("dest_search").value.toLowerCase();
-    produceRecommendations(destinationSearch); 
+    let successfulSearch = await produceRecommendations(destinationSearch);  
+    return successfulSearch;
 }
 
 /**
- * This function updates the page to show the recommendations based on the user's search.
+ * This function updates the page to show the recommendations based on the search.
  * @param {String} search seach value
  */
 function produceRecommendations(search) {
 
     // make this async function?????
-    fetch("../travel_recommendations.json")
+    return fetch("../travel_recommendations.json")
     .then(response => {
         return response.json();
      })
@@ -23,26 +24,22 @@ function produceRecommendations(search) {
         var destinations = data;        
 
         // Must first check that the input is valid
-        if (!Object.keys(destinations).includes(search)) {
-            togglePopup("invalid_search_popup");
-        } else {
-
+        if (Object.keys(destinations).includes(search)) {
             let recommendationList = document.getElementById("recommendations");
             recommendationList.style.visibility = "visible";
 
             let destinationResults = destinations[search];
-            let contentDiv = document.getElementById("recommend_list");            
+            let contentDiv = document.getElementById("recommend_list");
             contentDiv.innerHTML = "";
 
             // add to the html each of the recommendations from the returned results
-            destinationResults.forEach(destination => {                                
-                // 
-                getHTML(search, destination);    
-            });
+            destinationResults.forEach(destination => getHTML(search, destination));
+            return 1;
+        } else {
+            return 0;
         }
     })
     .catch(error => "Cannot access JSON");
-
 }
 
 /**
@@ -52,13 +49,8 @@ function produceRecommendations(search) {
  */
 function getHTML(searchResult, destination) {
 
-    function getTitle(name) {
-        if (name.includes(",")) {
-            return name.split(",");
-        } else {
-            return [name, ""];
-        }
-    }
+    const getTitle = function (name) { return name.includes(",") ? name.split(",") : [name, ""] };
+
 
     let titleConfig = getTitle(destination.name);
     destinationTime = "14:00";
@@ -81,9 +73,10 @@ function getHTML(searchResult, destination) {
     contentDiv.innerHTML += htmlString;
 
     // Get the HTML for the accordion item's body, depending on the search type
-    let htmlBody = "";
+    var htmlBody = "";
     var bodyElement = document.getElementById(`${destination.id}_body`);
 
+    // Append the correct HTML to the accordion item's body, depending on the search result
     if (searchResult != "countries") {
         htmlBody += `<div class="card">
                       <img src="${destination.imageUrl}" class="card-img-top" alt="">
@@ -95,7 +88,8 @@ function getHTML(searchResult, destination) {
                         
     } else {   
 
-        bodyElement.innerHTML = `<ul id="${destination.id}_card_list"></ul>`;
+        // Generate HTML list of cities for country search
+        bodyElement.innerHTML = `<ul id="${destination.id}_card_list" class="card-list"></ul>`;
         var cardList = document.getElementById(`${destination.id}_card_list`);
 
         destination.cities.forEach(city => {
@@ -106,7 +100,8 @@ function getHTML(searchResult, destination) {
                           <h5 class="card-title">${city.name}</h5>
                             <p class="card-text">${city.description}</p>
                           </div>
-                        </div></li>`;             
+                        </div></li>`;            
+                        //scroll cards?
             cardList.innerHTML += htmlBody;
         });        
     }
@@ -114,14 +109,22 @@ function getHTML(searchResult, destination) {
 }
 
 /**
- * Clear the recommendations from the page.
+ * Clear the content of the search bar.
  */
-function clearSearch(){
+function clearSearchBar(){
+    document.getElementById("dest_search").value = "";
+}
+
+/**
+ * Clear the recommendations from the page and the search bar
+ */
+function clearSearch() {
     // Clear recommendations
 
     // FIX: when cards are open, the bars close first and leave the cards...
     let recommendations = document.getElementById("recommendations");
-    recommendations.style.visibility="hidden";
+    recommendations.style.visibility = "hidden";
+    clearSearchBar();
 }
 
 /**
@@ -132,7 +135,7 @@ async function loadContent(pageURL){
     let getContent = await fetch(pageURL)
     .then(response => response.text())
     .then(text => {
-            let contentDiv = document.getElementById("main_content");
+            let contentDiv = document.getElementById("main-content");
                 contentDiv.innerHTML = text;
         });
 
@@ -141,18 +144,84 @@ async function loadContent(pageURL){
     const popoverList = [...popoverTriggerList].map(popoverTriggerEl => new bootstrap.Popover(popoverTriggerEl))
 }
 
+/**
+ * Load homepage content into main page.
+ */
 function loadHome(){
     loadContent("../Templates/home.html");
 }
 
+/**
+ * Load about us content into main page.
+ */
+async function loadAboutUs() {
+    let contentLoaded = await loadContent("../Templates/about_us.html");
+    getTeam();
+}
+
+/**
+ * Fetch the team data and add HTML content to team section.
+ */
+function getTeam() {
+    fetch("../travel_team.json")
+        .then(response => response.json())
+        .then(teamData => {
+            let teamSection = document.getElementById("team-section");
+            let fadeTime = 2000;
+            teamData.members.forEach(member => {
+                let html = `<div class="col" id="${member.id} style="display:none">
+                                <div class="card w-50 mb-3 member-card">
+                                    <div class="card-body">
+                                        <h5 class="card-title">${member.name}</h5>
+                                        <img class="flag-icon" src="${member.nationality}">
+                                        <p class="card-text">    
+                                        <h6 class="card-sub-title"><u>Favourite destination</u></h6>
+                                            ${member.favouritePlace}
+                                        </p>
+                                    </div>
+                                </div>
+                            </div>`;
+                teamSection.innerHTML += html;
+                $(`#${member.id}`).fadeIn(fadeTime);
+                fadeTime+=3000;
+            });            
+        })
+}
+
+/**
+ * Creates popup element to show success of form submission to the user
+ * @param {String} message Message to show in popup
+ */
+function submitContact(message) {
+
+    // Check if form filled out
+    var contactName = document.getElementById("contact-name").value;
+    var contactEmail = document.getElementById("contact-email").value;
+    var contactMessage = document.getElementById("contact-message".value);
+
+    const alertPlaceholder = document.getElementById('submit-alert');
+
+    if (!contactName || !contactEmail || contactMessage) {
+        alertPlaceholder.innerHTML = `<div class="alert alert-warning alert-dismissible" role="alert">
+                                       <div>Please fill in the form correctly</div>
+                                       <button type="button" class="btn-close submit-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                      </div>`;
+
+    } else {
+        alertPlaceholder.innerHTML = `<div class="alert alert-success alert-dismissible" role="alert">
+                                       <div>${message}</div>
+                                       <button type="button" class="btn-close submit-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                                      </div>`
+    }
+}
 
 //****************************** EVENT LISTENERS ****************************************/
 
 /**
  * Event listeners for updating the page content from the navigation page.
  */
-$(document).on("click", "#home", function(){loadContent("../Templates/home.html")});
-$(document).on("click", "#about_us", function(){loadContent("../Templates/about_us.html")});
+$(document).on("click", "#home", loadHome);
+$(document).on("click", "#about_us", loadAboutUs);
 $(document).on("click", "#contact_us", function(){loadContent("../Templates/contact_us.html")});
 
 /**
@@ -209,22 +278,26 @@ $(document).on("mouseout", "#country", function(){
     popover.hide();
 });
 
+/**
+ * Event listener for recommendation search 
+ */
+$(document).on("click", "#search-button", function () {
+    searchDestination()
+        .then(success => {
+            if (!success) {
+                const popover = bootstrap.Popover.getOrCreateInstance('#search-popover');
+                popover.show();
+                setTimeout(() => { popover.dispose() }, 1000);
+            } else {
+                clearSearchBar();
+            }
+        })
+      
+})
 
-
-    //to do:
-
-    //The search button isn't working anymore!'
-    //appears then disappears....
-
-
-
-
-
-function togglePopup(popupId) {
-    var popup = document.getElementById(popupId);
-    if (popup.style.visibility == 'visible') {
-        popup.style.visibility = 'hidden';
-    } else {
-        popup.style.visibility = 'visible';
-    }
-}
+/**
+ * Event listeners for contact form submission
+ */
+$(document).on("click", "#submit-alert-button", function () {
+    submitContact("Thank you for contacting us!");
+})

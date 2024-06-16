@@ -36,31 +36,29 @@
                     <li class="nav-item">
                         <a class="nav-link" id="about_us">About Us</a>
                     </li>
-                    
+
                     <li class="nav-item">
                         <a class="nav-link" id="contact_us">Contact Us</a>
                     </li>
                 </ul>
-                <form class="d-flex">
-                    <input class="form-control me-2" id="dest_search" placeholder="Search your destination" aria-label="Search">
-                    <button class="btn btn-outline-success" onclick="searchDestination();">Search</button>
-                    <button class="btn btn-outline-success" onclick="clearSearch();">Clear</button>
+                <form class="d-flex" autocomplete="off">
+                    <div id="search-popover"
+                          data-bs-toggle="search-popover"
+                          data-bs-placement="bottom"
+                          data-bs-content="Invalid search">
+                        <input class="form-control me-2" id="dest_search" placeholder="Search your destination" aria-label="Search">
+                    </div>
+                    <button class="btn btn-outline-success" id="search-button" type="button">Search</button>
                 </form>
+                <button class="btn btn-outline-success" type="button" onclick="clearSearch();">Clear</button>
+
             </div>
         </div>
     </nav>
 
-    <div id="main_content"></div>
+    <div id="search-alert"></div>
 
-    <div class="popup" id="contact_popup">
-        <h3>Thank you for contacting us!</h3>
-        <button id="contact_popup_button" onclick="togglePopup('contact_popup');">Ok</button>
-    </div>
-
-    <div class="popup" id="invalid_search_popup">
-        <span>Invalid search, please try again!</span>
-        <button id="invalid_search_button" onclick="togglePopup('invalid_search_popup');">Ok</button>
-    </div>
+    <div id="main-content"></div>
 
 </body>
 </html>

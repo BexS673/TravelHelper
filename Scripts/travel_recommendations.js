@@ -16,7 +16,7 @@ async function searchDestination() {
 function produceRecommendations(search) {
 
     // make this async function?????
-    return fetch("../travel_recommendations.json")
+    return fetch("../APIData/travel_recommendations.json")
     .then(response => {
         return response.json();
      })
@@ -163,7 +163,7 @@ async function loadAboutUs() {
  * Fetch the team data and add HTML content to team section.
  */
 function getTeam() {
-    fetch("../travel_team.json")
+    fetch("../APIData/travel_team.json")
         .then(response => response.json())
         .then(teamData => {
             let teamSection = document.getElementById("team-section");
